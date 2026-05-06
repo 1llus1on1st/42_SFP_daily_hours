@@ -356,62 +356,104 @@ export default function App() {
                 ))}
 
                 {cells.map((c, i) => {
-                  if (c.empty) return <div key={i} className="min-h-24 rounded-xl"></div>;
+                  if (c.empty) return <div key={i} className="h-32 rounded-xl"></div>;
+
+                  const completed = hasDailyHours(c.day);
+                  const statusLabel = completed
+                    ? "Completed"
+                    : c.selected === "in"
+                    ? "In person"
+                    : c.selected === "remote"
+                    ? "Remote"
+                    : c.dateStatus === "today"
+                    ? "Today"
+                    : c.dateStatus === "past"
+                    ? "Inactive"
+                    : "Available";
+                  const cardState = completed
+                    ? "border-transparent bg-green-50 shadow-md shadow-green-100/70 ring-1 ring-green-100"
+                    : c.selected
+                    ? "border-transparent bg-blue-50 shadow-md shadow-blue-100/80 ring-1 ring-blue-100"
+                    : c.dateStatus === "today"
+                    ? "border-transparent bg-amber-50 ring-1 ring-amber-100"
+                    : c.dateStatus === "past"
+                    ? "border-transparent bg-[#F3F4F6] text-[#6B7280] ring-1 ring-[#E5E7EB]"
+                    : "border-transparent bg-[#FFFFFF] ring-1 ring-[#E5E7EB]";
+                  const badgeState = completed
+                    ? "bg-[#16A34A] text-white"
+                    : c.selected
+                    ? "bg-[#2563EB] text-white"
+                    : c.dateStatus === "today"
+                    ? "bg-amber-100 text-[#92400E]"
+                    : c.dateStatus === "past"
+                    ? "bg-[#E5E7EB] text-[#6B7280]"
+                    : "bg-[#F9FAFB] text-[#374151]";
+                  const statusState = completed
+                    ? "text-[#15803D]"
+                    : c.selected === "in"
+                    ? "text-[#047857]"
+                    : c.selected === "remote"
+                    ? "text-[#2563EB]"
+                    : c.dateStatus === "today"
+                    ? "text-[#B45309]"
+                    : c.dateStatus === "past"
+                    ? "text-[#6B7280]"
+                    : "text-[#6B7280]";
 
                   return (
                     <div
                       key={c.key}
-                      className={`
-                        min-h-24 rounded-xl border p-1.5 transition
-                        ${c.selected === "in"
-                          ? "border-[#16A34A] bg-green-50 shadow-sm"
-                          : c.selected === "remote"
-                          ? "border-[#2563EB] bg-blue-50 shadow-sm"
-                          : c.dateStatus === "today"
-                          ? "border-[#F59E0B] bg-amber-50"
-                          : c.dateStatus === "past"
-                          ? "border-[#E5E7EB] bg-[#F9FAFB]"
-                          : "border-[#E5E7EB] bg-[#FFFFFF]"}
-                      `}
+                      role="button"
+                      tabIndex={0}
+                      aria-pressed={Boolean(c.selected)}
+                      onClick={(e) => toggle(c.key, c.day, e)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          toggle(c.key, c.day, e);
+                        }
+                      }}
+                      className={`h-32 rounded-xl border p-3 outline-none transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F8FAFC] hover:shadow-md focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 ${cardState}`}
                     >
-                      <button
-                        type="button"
-                        onClick={(e) => toggle(c.key, c.day, e)}
-                        className={`
-                          flex h-9 w-full items-center justify-center rounded-xl text-sm font-semibold transition
-                          ${c.selected === "in"
-                            ? "bg-[#16A34A] text-white hover:bg-green-700"
-                            : c.selected === "remote"
-                            ? "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
-                            : c.dateStatus === "today"
-                            ? "bg-amber-100 text-[#92400E] hover:bg-amber-200"
-                            : c.dateStatus === "past"
-                            ? "bg-[#F3F4F6] text-[#6B7280] hover:bg-[#E5E7EB]"
-                            : "bg-[#FFFFFF] text-[#374151] hover:bg-[#F9FAFB]"}
-                        `}
-                      >
-                        {c.day}
-                      </button>
-
-                      {c.selected && (
-                        <label className="mt-2 block">
-                          <span className="sr-only">
-                            Hours present on {MONTHS[month]} {c.day}, {year}
+                      <div className="flex h-full flex-col gap-3">
+                        <div className="flex items-center justify-between">
+                          <span className={`inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm font-semibold ${badgeState}`}>
+                            {c.day}
                           </span>
-                          <input
-                            className="h-8 w-full rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] px-1 text-center text-sm font-medium text-[#111827] outline-none transition placeholder:text-[#9CA3AF] focus:border-[#2563EB] focus:ring-2 focus:ring-blue-100"
-                            type="number"
-                            min="0"
-                            max={c.selected === "in" ? MAX_IN_PERSON_PER_DAY : undefined}
-                            step="0.25"
-                            inputMode="decimal"
-                            placeholder="hrs"
-                            value={dailyHours[c.key] ?? ""}
-                            onChange={(e) => updateDailyHours(c.key, e.target.value)}
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        </label>
-                      )}
+                          {c.dateStatus === "today" && (
+                            <span className="h-2 w-2 rounded-full bg-[#F59E0B]" aria-label="Today" />
+                          )}
+                        </div>
+
+                        {c.selected ? (
+                          <label className="block">
+                            <span className="sr-only">
+                              Hours present on {MONTHS[month]} {c.day}, {year}
+                            </span>
+                            <input
+                              className="h-9 w-full rounded-lg border border-transparent bg-white/90 px-2 text-center text-sm font-semibold text-[#111827] shadow-sm outline-none transition placeholder:text-[#9CA3AF] focus:ring-2 focus:ring-blue-200"
+                              type="number"
+                              min="0"
+                              max={c.selected === "in" ? MAX_IN_PERSON_PER_DAY : undefined}
+                              step="0.25"
+                              inputMode="decimal"
+                              placeholder="hrs"
+                              value={dailyHours[c.key] ?? ""}
+                              onChange={(e) => updateDailyHours(c.key, e.target.value)}
+                              onClick={(e) => e.stopPropagation()}
+                              onKeyDown={(e) => e.stopPropagation()}
+                            />
+                          </label>
+                        ) : (
+                          <div className="flex h-9 items-center justify-center rounded-lg bg-white/55 text-xs font-medium text-[#9CA3AF]">
+                            hrs
+                          </div>
+                        )}
+
+                        <div className={`mt-auto truncate text-center text-xs font-semibold ${statusState}`}>
+                          {statusLabel}
+                        </div>
+                      </div>
                     </div>
                   );
                 })}

@@ -239,9 +239,9 @@ export default function App() {
     <main className="min-h-screen bg-[#F6F7FB] px-4 py-8 text-base leading-relaxed text-[#111827] sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-6xl space-y-8">
 
-        <header className="rounded-lg border border-[#E5E7EB] bg-white p-6 shadow-sm">
+        <header className="min-w-0 rounded-lg border border-[#E5E7EB] bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-            <div className="max-w-2xl">
+            <div className="min-w-0 max-w-2xl">
               <p className="text-[13px] font-medium uppercase leading-5 tracking-normal text-[#64748B]">
                 School attendance
               </p>
@@ -253,7 +253,7 @@ export default function App() {
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex min-w-0 flex-wrap items-center gap-4">
               <div
                 className="grid h-24 w-24 place-items-center rounded-full shadow-sm transition duration-200 ease-out"
                 style={{
@@ -277,7 +277,7 @@ export default function App() {
           </div>
 
           <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <label className="rounded-lg bg-[#F8FAFC] p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+            <label className="min-w-0 rounded-lg bg-[#F8FAFC] p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
               <span className="block text-[13px] font-medium leading-5 text-[#64748B]">
                 Required Hours
               </span>
@@ -289,7 +289,7 @@ export default function App() {
               />
             </label>
 
-            <label className="rounded-lg bg-[#F8FAFC] p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+            <label className="min-w-0 rounded-lg bg-[#F8FAFC] p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
               <span className="block text-[13px] font-medium leading-5 text-[#64748B]">
                 Attended Hours
               </span>
@@ -301,7 +301,7 @@ export default function App() {
               />
             </label>
 
-            <div className="rounded-lg bg-blue-50 p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+            <div className="min-w-0 rounded-lg bg-blue-50 p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
               <p className="text-[13px] font-medium leading-5 text-[#2563EB]">Remaining</p>
               <p className="mt-3 text-[28px] font-semibold leading-9 tracking-normal text-[#0F172A]">
                 {formatTime(remaining)}
@@ -310,16 +310,16 @@ export default function App() {
           </div>
 
           {targetReached && (
-            <div className="success-sheen relative mt-6 overflow-hidden rounded-lg bg-green-50 p-4 text-sm font-medium leading-6 text-[#15803D] shadow-sm ring-1 ring-green-100">
+            <div className="success-sheen relative mt-6 rounded-lg bg-green-50 p-4 text-sm font-medium leading-6 text-[#15803D] shadow-sm ring-1 ring-green-100">
               Target reached. Your month is fully covered.
             </div>
           )}
         </header>
 
-        <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="space-y-8">
-            <div className="rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
-              <div className="mb-6 flex items-center justify-center gap-4">
+        <section className="grid min-w-0 gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="min-w-0 space-y-8">
+            <div className="min-w-0 rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-4 shadow-sm md:p-6">
+              <div className="mb-6 flex min-w-0 items-center justify-center gap-4">
                 <button
                   type="button"
                   onClick={() => changeMonth(-1)}
@@ -348,18 +348,18 @@ export default function App() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-7 gap-2">
+              <div className="grid min-w-0 grid-cols-7 gap-1 md:gap-2">
                 {WEEKDAYS.map(d => (
                   <div
                     key={d}
-                    className="pb-2 text-center text-[13px] font-medium uppercase leading-5 text-[#64748B]"
+                    className="min-w-0 pb-2 text-center text-[12px] font-medium uppercase leading-5 text-[#64748B] md:text-[13px]"
                   >
                     {d}
                   </div>
                 ))}
 
                 {cells.map((c, i) => {
-                  if (c.empty) return <div key={i} className="h-32 rounded-lg"></div>;
+                  if (c.empty) return <div key={i} className="min-h-36 min-w-0 rounded-lg md:min-h-40"></div>;
 
                   const completed = hasDailyHours(c.day);
                   const statusLabel = completed
@@ -418,10 +418,10 @@ export default function App() {
                           toggle(c.key, c.day, e);
                         }
                       }}
-                      className={`h-32 rounded-lg border p-3 outline-none transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 ${c.selected ? "scale-[1.01]" : ""} ${cardState}`}
+                      className={`flex min-h-36 min-w-0 flex-col items-stretch justify-between gap-2 rounded-lg border p-3 pb-4 outline-none transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 md:min-h-40 md:p-4 md:pb-4 ${c.selected ? "scale-[1.01]" : ""} ${cardState}`}
                     >
-                      <div className="flex h-full flex-col gap-3">
-                        <div className="flex items-center justify-between">
+                      <div className="flex min-w-0 flex-1 flex-col items-stretch justify-between gap-2">
+                        <div className="flex min-w-0 items-center justify-between gap-2">
                           <span className={`inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-[13px] font-medium leading-5 ${badgeState}`}>
                             {c.day}
                           </span>
@@ -431,7 +431,7 @@ export default function App() {
                         </div>
 
                         {c.selected ? (
-                          <label className="block">
+                          <label className="block min-w-0 shrink-0">
                             <span className="sr-only">
                               Hours present on {MONTHS[month]} {c.day}, {year}
                             </span>
@@ -450,12 +450,12 @@ export default function App() {
                             />
                           </label>
                         ) : (
-                          <div className="flex h-10 items-center justify-center rounded-lg bg-white/55 text-[13px] font-medium leading-5 text-[#94A3B8]">
+                          <div className="flex min-h-10 min-w-0 shrink-0 items-center justify-center rounded-lg bg-white/55 px-2 text-[12px] font-medium leading-5 text-[#94A3B8] md:text-[13px]">
                             hrs
                           </div>
                         )}
 
-                        <div className={`mt-auto truncate text-center text-[13px] font-medium leading-5 ${statusState}`}>
+                        <div className={`min-w-0 px-3 text-center text-[12px] font-medium leading-4 md:text-[13px] md:leading-5 ${statusState}`}>
                           {statusLabel}
                         </div>
                       </div>
@@ -466,42 +466,42 @@ export default function App() {
             </div>
           </div>
 
-          <aside className="space-y-8">
-            <div className="rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
+          <aside className="min-w-0 space-y-8">
+            <div className="min-w-0 rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
               <h2 className="text-[28px] font-semibold leading-9 tracking-normal text-[#0F172A]">Summary</h2>
               <div className="mt-6 space-y-4">
-                <div className="flex items-center justify-between gap-4 border-b border-[#E5E7EB] pb-4">
-                  <span className="text-[13px] font-medium leading-5 text-[#64748B]">Entered on selected days</span>
-                  <span className="text-base font-medium leading-6 text-[#0F172A]">{formatTime(enteredSelectedHours)}</span>
+                <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-[#E5E7EB] pb-4">
+                  <span className="min-w-0 text-[13px] font-medium leading-5 text-[#64748B]">Entered on selected days</span>
+                  <span className="min-w-0 text-base font-medium leading-6 text-[#0F172A]">{formatTime(enteredSelectedHours)}</span>
                 </div>
-                <div className="flex items-center justify-between gap-4 border-b border-[#E5E7EB] pb-4">
-                  <span className="text-[13px] font-medium leading-5 text-[#64748B]">Total counted hours</span>
-                  <span className="text-base font-medium leading-6 text-[#16A34A]">{formatTime(totalCountedHours)}</span>
+                <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-[#E5E7EB] pb-4">
+                  <span className="min-w-0 text-[13px] font-medium leading-5 text-[#64748B]">Total counted hours</span>
+                  <span className="min-w-0 text-base font-medium leading-6 text-[#16A34A]">{formatTime(totalCountedHours)}</span>
                 </div>
-                <div className="flex items-center justify-between gap-4 border-b border-[#E5E7EB] pb-4">
-                  <span className="text-[13px] font-medium leading-5 text-[#64748B]">Remaining</span>
-                  <span className="text-base font-medium leading-6 text-[#2563EB]">{formatTime(remaining)}</span>
+                <div className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-[#E5E7EB] pb-4">
+                  <span className="min-w-0 text-[13px] font-medium leading-5 text-[#64748B]">Remaining</span>
+                  <span className="min-w-0 text-base font-medium leading-6 text-[#2563EB]">{formatTime(remaining)}</span>
                 </div>
-                <div className="flex items-center justify-between gap-4">
-                  <span className="text-[13px] font-medium leading-5 text-[#64748B]">Still needs days allocated</span>
-                  <span className="text-base font-medium leading-6 text-[#F59E0B]">{formatTime(unallocatedHours)}</span>
+                <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+                  <span className="min-w-0 text-[13px] font-medium leading-5 text-[#64748B]">Still needs days allocated</span>
+                  <span className="min-w-0 text-base font-medium leading-6 text-[#F59E0B]">{formatTime(unallocatedHours)}</span>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
+            <div className="min-w-0 rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
               <h2 className="text-[28px] font-semibold leading-9 tracking-normal text-[#0F172A]">Daily plan</h2>
               <div className="mt-6 space-y-4">
-                <div className="rounded-lg bg-[#F8FAFC] p-4 shadow-sm">
-                  <p className="text-[13px] font-medium leading-5 text-[#475569]">In-person days without manual hours</p>
+                <div className="min-w-0 rounded-lg bg-[#F8FAFC] p-4 shadow-sm">
+                  <p className="min-w-0 text-[13px] font-medium leading-5 text-[#475569]">In-person days without manual hours</p>
                   <p className="mt-2 text-[28px] font-semibold leading-9 text-[#0F172A]">{inPlanningDays.length}</p>
-                  <p className="mt-1 text-[13px] font-medium leading-5 text-[#64748B]">{formatTime(inPerDay)} / day</p>
+                  <p className="mt-1 min-w-0 text-[13px] font-medium leading-5 text-[#64748B]">{formatTime(inPerDay)} / day</p>
                 </div>
 
-                <div className="rounded-lg bg-[#F8FAFC] p-4 shadow-sm">
-                  <p className="text-[13px] font-medium leading-5 text-[#475569]">Remote days without manual hours</p>
+                <div className="min-w-0 rounded-lg bg-[#F8FAFC] p-4 shadow-sm">
+                  <p className="min-w-0 text-[13px] font-medium leading-5 text-[#475569]">Remote days without manual hours</p>
                   <p className="mt-2 text-[28px] font-semibold leading-9 text-[#0F172A]">{remotePlanningDays.length}</p>
-                  <p className="mt-1 text-[13px] font-medium leading-5 text-[#64748B]">{formatTime(remotePerDay)} / day</p>
+                  <p className="mt-1 min-w-0 text-[13px] font-medium leading-5 text-[#64748B]">{formatTime(remotePerDay)} / day</p>
                 </div>
               </div>
             </div>

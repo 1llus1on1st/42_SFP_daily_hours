@@ -146,6 +146,8 @@ export default function App() {
   const progress = targetHours > 0
     ? Math.min((totalCountedHours / targetHours) * 100, 100)
     : 0;
+  const progressRounded = Math.round(progress);
+  const targetReached = targetHours > 0 && totalCountedHours >= targetHours;
 
   const cells = useMemo(() => {
     const arr = [];
@@ -234,104 +236,105 @@ export default function App() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F6F7FB] px-4 py-8 text-[#111827] sm:px-6 lg:px-8">
+    <main className="min-h-screen bg-[#F6F7FB] px-4 py-8 text-base leading-relaxed text-[#111827] sm:px-6 lg:px-8">
       <div className="mx-auto w-full max-w-6xl space-y-8">
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <p className="text-sm font-medium text-[#6B7280]">School attendance</p>
-            <h1 className="mt-1 text-3xl font-semibold tracking-normal text-[#111827]">
-              Attendance Planner
-            </h1>
+        <header className="rounded-lg border border-[#E5E7EB] bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-[13px] font-medium uppercase leading-5 tracking-normal text-[#64748B]">
+                School attendance
+              </p>
+              <h1 className="mt-2 text-[40px] font-bold leading-[48px] tracking-normal text-[#0F172A]">
+                Attendance Planner
+              </h1>
+              <p className="mt-3 text-base font-normal leading-7 text-[#475569]">
+                {MONTHS[month]} is {progressRounded}% complete toward your attendance target.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <div
+                className="grid h-24 w-24 place-items-center rounded-full shadow-sm transition duration-200 ease-out"
+                style={{
+                  background: `conic-gradient(#2563EB ${progress}%, #E2E8F0 0)`,
+                }}
+                aria-label={`${progressRounded}% complete`}
+              >
+                <div className="grid h-20 w-20 place-items-center rounded-full bg-white">
+                  <span className="text-lg font-semibold leading-6 text-[#0F172A]">{progressRounded}%</span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={resetPlanner}
+                className="inline-flex h-10 items-center justify-center rounded-lg px-4 text-[13px] font-medium leading-5 text-[#64748B] transition duration-200 ease-out hover:bg-[#F1F5F9] hover:text-[#0F172A] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]"
+              >
+                Reset
+              </button>
+            </div>
           </div>
 
-          <button
-            type="button"
-            onClick={resetPlanner}
-            className="inline-flex h-10 items-center justify-center rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] px-4 text-sm font-medium text-[#374151] shadow-sm transition hover:border-[#CBD5E1] hover:bg-[#F9FAFB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]"
-          >
-            Reset planner
-          </button>
-        </div>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <label className="rounded-lg bg-[#F8FAFC] p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+              <span className="block text-[13px] font-medium leading-5 text-[#64748B]">
+                Required Hours
+              </span>
+              <input
+                className="app-input mt-3"
+                type="number"
+                value={targetHours}
+                onChange={e => setTargetHours(+e.target.value)}
+              />
+            </label>
 
-        <section className="grid gap-4 md:grid-cols-4">
-          <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] p-5 shadow-sm">
-            <p className="text-sm font-medium text-[#6B7280]">Required</p>
-            <p className="mt-2 text-2xl font-semibold text-[#111827]">{formatTime(targetHours)}</p>
+            <label className="rounded-lg bg-[#F8FAFC] p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+              <span className="block text-[13px] font-medium leading-5 text-[#64748B]">
+                Attended Hours
+              </span>
+              <input
+                className="app-input mt-3"
+                type="number"
+                value={otherAttendedHours}
+                onChange={e => setOtherAttendedHours(+e.target.value)}
+              />
+            </label>
+
+            <div className="rounded-lg bg-blue-50 p-4 shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-md">
+              <p className="text-[13px] font-medium leading-5 text-[#2563EB]">Remaining</p>
+              <p className="mt-3 text-[28px] font-semibold leading-9 tracking-normal text-[#0F172A]">
+                {formatTime(remaining)}
+              </p>
+            </div>
           </div>
-          <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] p-5 shadow-sm">
-            <p className="text-sm font-medium text-[#6B7280]">Counted</p>
-            <p className="mt-2 text-2xl font-semibold text-[#16A34A]">{formatTime(totalCountedHours)}</p>
-          </div>
-          <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] p-5 shadow-sm">
-            <p className="text-sm font-medium text-[#6B7280]">Remaining</p>
-            <p className="mt-2 text-2xl font-semibold text-[#2563EB]">{formatTime(remaining)}</p>
-          </div>
-          <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] p-5 shadow-sm">
-            <p className="text-sm font-medium text-[#6B7280]">Needs days</p>
-            <p className="mt-2 text-2xl font-semibold text-[#F59E0B]">{formatTime(unallocatedHours)}</p>
-          </div>
-        </section>
+
+          {targetReached && (
+            <div className="success-sheen relative mt-6 overflow-hidden rounded-lg bg-green-50 p-4 text-sm font-medium leading-6 text-[#15803D] shadow-sm ring-1 ring-green-100">
+              Target reached. Your month is fully covered.
+            </div>
+          )}
+        </header>
 
         <section className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
           <div className="space-y-8">
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div>
-                  <h2 className="text-lg font-semibold text-[#111827]">Planning inputs</h2>
-                  <p className="mt-1 text-sm text-[#6B7280]">Set the target and any hours not entered on calendar days.</p>
-                </div>
-
-                <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E7EB] sm:w-48">
-                  <div
-                    className="h-full rounded-full bg-[#2563EB]"
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                <label className="space-y-2">
-                  <span className="block text-sm font-medium text-[#374151]">
-                    Required hours
-                  </span>
-                  <input
-                    className="h-11 w-full rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] px-3 text-[#111827] shadow-sm outline-none transition placeholder:text-[#9CA3AF] focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100"
-                    type="number"
-                    value={targetHours}
-                    onChange={e => setTargetHours(+e.target.value)}
-                  />
-                </label>
-
-                <label className="space-y-2">
-                  <span className="block text-sm font-medium text-[#374151]">
-                    Other attended hours
-                  </span>
-                  <input
-                    className="h-11 w-full rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] px-3 text-[#111827] shadow-sm outline-none transition placeholder:text-[#9CA3AF] focus:border-[#2563EB] focus:ring-4 focus:ring-blue-100"
-                    type="number"
-                    value={otherAttendedHours}
-                    onChange={e => setOtherAttendedHours(+e.target.value)}
-                  />
-                </label>
-              </div>
-            </div>
-
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
-              <div className="mb-6 flex items-center justify-between gap-4">
+            <div className="rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
+              <div className="mb-6 flex items-center justify-center gap-4">
                 <button
                   type="button"
                   onClick={() => changeMonth(-1)}
                   aria-label="Previous month"
                   title="Previous month"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] text-[#374151] shadow-sm transition hover:bg-[#F9FAFB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#F8FAFC] text-[#475569] shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-white hover:text-[#0F172A] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]"
                 >
                   <ChevronLeft size={20} aria-hidden="true" />
                 </button>
 
-                <div className="text-center" aria-live="polite">
-                  <p className="text-xl font-semibold text-[#111827]">{MONTHS[month]} {year}</p>
-                  <p className="mt-1 text-sm text-[#6B7280]">Click a day to cycle in-person, remote, off.</p>
+                <div className="min-w-0 text-center" aria-live="polite">
+                  <h2 className="text-[28px] font-semibold leading-9 tracking-normal text-[#0F172A]">
+                    {MONTHS[month]} {year}
+                  </h2>
+                  <p className="mt-1 text-[13px] font-medium leading-5 text-[#64748B]">Click a day to cycle in-person, remote, off.</p>
                 </div>
 
                 <button
@@ -339,7 +342,7 @@ export default function App() {
                   onClick={() => changeMonth(1)}
                   aria-label="Next month"
                   title="Next month"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] text-[#374151] shadow-sm transition hover:bg-[#F9FAFB] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-[#F8FAFC] text-[#475569] shadow-sm transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-white hover:text-[#0F172A] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563EB]"
                 >
                   <ChevronRight size={20} aria-hidden="true" />
                 </button>
@@ -349,14 +352,14 @@ export default function App() {
                 {WEEKDAYS.map(d => (
                   <div
                     key={d}
-                    className="pb-2 text-center text-xs font-semibold uppercase text-[#6B7280]"
+                    className="pb-2 text-center text-[13px] font-medium uppercase leading-5 text-[#64748B]"
                   >
                     {d}
                   </div>
                 ))}
 
                 {cells.map((c, i) => {
-                  if (c.empty) return <div key={i} className="h-32 rounded-xl"></div>;
+                  if (c.empty) return <div key={i} className="h-32 rounded-lg"></div>;
 
                   const completed = hasDailyHours(c.day);
                   const statusLabel = completed
@@ -381,10 +384,12 @@ export default function App() {
                     : "border-transparent bg-[#FFFFFF] ring-1 ring-[#E5E7EB]";
                   const badgeState = completed
                     ? "bg-[#16A34A] text-white"
-                    : c.selected
+                    : c.selected === "in"
+                    ? "bg-[#334155] text-white"
+                    : c.selected === "remote"
                     ? "bg-[#2563EB] text-white"
                     : c.dateStatus === "today"
-                    ? "bg-amber-100 text-[#92400E]"
+                    ? "border border-[#F59E0B] bg-white text-[#B45309]"
                     : c.dateStatus === "past"
                     ? "bg-[#E5E7EB] text-[#6B7280]"
                     : "bg-[#F9FAFB] text-[#374151]";
@@ -413,11 +418,11 @@ export default function App() {
                           toggle(c.key, c.day, e);
                         }
                       }}
-                      className={`h-32 rounded-xl border p-3 outline-none transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#F8FAFC] hover:shadow-md focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 ${cardState}`}
+                      className={`h-32 rounded-lg border p-3 outline-none transition duration-200 ease-out hover:-translate-y-0.5 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-[#2563EB] focus-visible:ring-offset-2 ${c.selected ? "scale-[1.01]" : ""} ${cardState}`}
                     >
                       <div className="flex h-full flex-col gap-3">
                         <div className="flex items-center justify-between">
-                          <span className={`inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-sm font-semibold ${badgeState}`}>
+                          <span className={`inline-flex h-8 min-w-8 items-center justify-center rounded-lg px-2 text-[13px] font-medium leading-5 ${badgeState}`}>
                             {c.day}
                           </span>
                           {c.dateStatus === "today" && (
@@ -431,7 +436,7 @@ export default function App() {
                               Hours present on {MONTHS[month]} {c.day}, {year}
                             </span>
                             <input
-                              className="h-9 w-full rounded-lg border border-transparent bg-white/90 px-2 text-center text-sm font-semibold text-[#111827] shadow-sm outline-none transition placeholder:text-[#9CA3AF] focus:ring-2 focus:ring-blue-200"
+                              className="calendar-input"
                               type="number"
                               min="0"
                               max={c.selected === "in" ? MAX_IN_PERSON_PER_DAY : undefined}
@@ -445,12 +450,12 @@ export default function App() {
                             />
                           </label>
                         ) : (
-                          <div className="flex h-9 items-center justify-center rounded-lg bg-white/55 text-xs font-medium text-[#9CA3AF]">
+                          <div className="flex h-10 items-center justify-center rounded-lg bg-white/55 text-[13px] font-medium leading-5 text-[#94A3B8]">
                             hrs
                           </div>
                         )}
 
-                        <div className={`mt-auto truncate text-center text-xs font-semibold ${statusState}`}>
+                        <div className={`mt-auto truncate text-center text-[13px] font-medium leading-5 ${statusState}`}>
                           {statusLabel}
                         </div>
                       </div>
@@ -462,41 +467,41 @@ export default function App() {
           </div>
 
           <aside className="space-y-8">
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-[#111827]">Summary</h2>
-              <div className="mt-5 space-y-4">
+            <div className="rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
+              <h2 className="text-[28px] font-semibold leading-9 tracking-normal text-[#0F172A]">Summary</h2>
+              <div className="mt-6 space-y-4">
                 <div className="flex items-center justify-between gap-4 border-b border-[#E5E7EB] pb-4">
-                  <span className="text-sm text-[#6B7280]">Entered on selected days</span>
-                  <span className="text-sm font-semibold text-[#111827]">{formatTime(enteredSelectedHours)}</span>
+                  <span className="text-[13px] font-medium leading-5 text-[#64748B]">Entered on selected days</span>
+                  <span className="text-base font-medium leading-6 text-[#0F172A]">{formatTime(enteredSelectedHours)}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4 border-b border-[#E5E7EB] pb-4">
-                  <span className="text-sm text-[#6B7280]">Total counted hours</span>
-                  <span className="text-sm font-semibold text-[#16A34A]">{formatTime(totalCountedHours)}</span>
+                  <span className="text-[13px] font-medium leading-5 text-[#64748B]">Total counted hours</span>
+                  <span className="text-base font-medium leading-6 text-[#16A34A]">{formatTime(totalCountedHours)}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4 border-b border-[#E5E7EB] pb-4">
-                  <span className="text-sm text-[#6B7280]">Remaining</span>
-                  <span className="text-sm font-semibold text-[#2563EB]">{formatTime(remaining)}</span>
+                  <span className="text-[13px] font-medium leading-5 text-[#64748B]">Remaining</span>
+                  <span className="text-base font-medium leading-6 text-[#2563EB]">{formatTime(remaining)}</span>
                 </div>
                 <div className="flex items-center justify-between gap-4">
-                  <span className="text-sm text-[#6B7280]">Still needs days allocated</span>
-                  <span className="text-sm font-semibold text-[#F59E0B]">{formatTime(unallocatedHours)}</span>
+                  <span className="text-[13px] font-medium leading-5 text-[#64748B]">Still needs days allocated</span>
+                  <span className="text-base font-medium leading-6 text-[#F59E0B]">{formatTime(unallocatedHours)}</span>
                 </div>
               </div>
             </div>
 
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
-              <h2 className="text-lg font-semibold text-[#111827]">Daily plan</h2>
-              <div className="mt-5 space-y-4">
-                <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] p-4">
-                  <p className="text-sm font-medium text-[#374151]">In-person days without manual hours</p>
-                  <p className="mt-2 text-2xl font-semibold text-[#111827]">{inPlanningDays.length}</p>
-                  <p className="mt-1 text-sm text-[#6B7280]">{formatTime(inPerDay)} / day</p>
+            <div className="rounded-lg border border-[#E5E7EB] bg-[#FFFFFF] p-6 shadow-sm">
+              <h2 className="text-[28px] font-semibold leading-9 tracking-normal text-[#0F172A]">Daily plan</h2>
+              <div className="mt-6 space-y-4">
+                <div className="rounded-lg bg-[#F8FAFC] p-4 shadow-sm">
+                  <p className="text-[13px] font-medium leading-5 text-[#475569]">In-person days without manual hours</p>
+                  <p className="mt-2 text-[28px] font-semibold leading-9 text-[#0F172A]">{inPlanningDays.length}</p>
+                  <p className="mt-1 text-[13px] font-medium leading-5 text-[#64748B]">{formatTime(inPerDay)} / day</p>
                 </div>
 
-                <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] p-4">
-                  <p className="text-sm font-medium text-[#374151]">Remote days without manual hours</p>
-                  <p className="mt-2 text-2xl font-semibold text-[#111827]">{remotePlanningDays.length}</p>
-                  <p className="mt-1 text-sm text-[#6B7280]">{formatTime(remotePerDay)} / day</p>
+                <div className="rounded-lg bg-[#F8FAFC] p-4 shadow-sm">
+                  <p className="text-[13px] font-medium leading-5 text-[#475569]">Remote days without manual hours</p>
+                  <p className="mt-2 text-[28px] font-semibold leading-9 text-[#0F172A]">{remotePlanningDays.length}</p>
+                  <p className="mt-1 text-[13px] font-medium leading-5 text-[#64748B]">{formatTime(remotePerDay)} / day</p>
                 </div>
               </div>
             </div>

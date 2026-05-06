@@ -16,10 +16,59 @@
     min-width: 320px;
     min-height: 100vh;
     background: #F6F7FB;
+    font-size: 16px;
+    line-height: 1.6;
   }
 
   button,
   input {
     font: inherit;
+  }
+
+  input[type='number'] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+  }
+
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+  }
+}
+
+@layer components {
+  .app-input {
+    @apply h-12 w-full rounded-lg border border-transparent bg-[#F8FAFC] px-4 text-center text-base font-medium text-[#111827] shadow-sm outline-none transition duration-200 ease-out placeholder:text-[#94A3B8] focus:bg-white focus:ring-4 focus:ring-blue-100;
+  }
+
+  .calendar-input {
+    @apply h-10 w-full rounded-lg border border-transparent bg-white/90 px-3 text-center text-[13px] font-medium leading-5 text-[#111827] shadow-sm outline-none transition duration-200 ease-out placeholder:text-[#94A3B8] focus:bg-white focus:ring-2 focus:ring-blue-200;
+  }
+}
+
+@layer utilities {
+  @keyframes success-sheen {
+    0% {
+      transform: translateX(-120%);
+      opacity: 0;
+    }
+
+    35% {
+      opacity: 0.7;
+    }
+
+    100% {
+      transform: translateX(120%);
+      opacity: 0;
+    }
+  }
+
+  .success-sheen::after {
+    animation: success-sheen 1400ms ease-out 1;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.65), transparent);
+    content: "";
+    inset: 0;
+    position: absolute;
   }
 }

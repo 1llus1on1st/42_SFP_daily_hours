@@ -9,6 +9,7 @@ const MONTHS = [
 const WEEKDAYS = ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"];
 const MAX_REMOTE = 42; // fixed rule
 const MAX_REMOTE_PER_DAY = 10.5;
+const MAX_IN_PERSON_PER_DAY = 24;
 
 function getDaysInMonth(year, month) {
   return new Date(year, month + 1, 0).getDate();
@@ -134,7 +135,11 @@ export default function App() {
     )
     : 0;
 
-  const inHours = remaining - remoteHours;
+  const inHours = Math.min(
+    Math.max(remaining - remoteHours, 0),
+    inPlanningDays.length * MAX_IN_PERSON_PER_DAY
+  );
+  const unallocatedHours = Math.max(remaining - remoteHours - inHours, 0);
 
   const remotePerDay = remotePlanningDays.length ? remoteHours / remotePlanningDays.length : 0;
   const inPerDay = inPlanningDays.length ? inHours / inPlanningDays.length : 0;
@@ -215,9 +220,13 @@ export default function App() {
   };
 
   const updateDailyHours = (key, value) => {
+    const cappedValue = selectedDates[key] === "in" && value !== ""
+      ? Math.min(Math.max(Number(value) || 0, 0), MAX_IN_PERSON_PER_DAY)
+      : value;
+
     setDailyHours((prev) => ({
       ...prev,
-      [key]: value,
+      [key]: cappedValue,
     }));
   };
 
@@ -339,6 +348,7 @@ export default function App() {
                       className="h-8 w-full rounded border border-gray-200 px-1 text-center text-sm text-gray-900"
                       type="number"
                       min="0"
+                      max={c.selected === "in" ? MAX_IN_PERSON_PER_DAY : undefined}
                       step="0.25"
                       inputMode="decimal"
                       placeholder="hrs"
@@ -359,6 +369,8 @@ export default function App() {
           <div>Total counted hours: {formatTime(totalCountedHours)}</div>
 
           <div>Remaining: {remaining}h</div>
+
+          <div>Still needs days allocated: {formatTime(unallocatedHours)}</div>
 
           <div>
             In-person days without manual hours: {inPlanningDays.length} → {formatTime(inPerDay)} / day
